@@ -7,15 +7,15 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/analytics'
   },
   {
-  path: '/analytics',
-  name: 'Analytics',
-  component: () => import('../views/AnalyticsDashboard.vue')
-}
+    path: '/analytics',
+    name: 'Analytics',
+    component: () => import('../views/AnalyticsDashboard.vue')
+  }
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
-} as any);
+})
 
 export default router

@@ -2,100 +2,98 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>PadelResults Analytics</ion-title>
+        <ion-title>Analíticas PadelResults</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content class="dashboard-content">
-      <!-- Selector de vista -->
-      <ion-segment v-model="viewMode" @ionChange="changeView">
+      <ion-segment v-model="viewMode" @ionChange="changeView" class="view-mode-selector">
         <ion-segment-button value="business">
-          <ion-label>Business</ion-label>
+          <ion-label>Negocio</ion-label>
         </ion-segment-button>
         <ion-segment-button value="technical">
-          <ion-label>Technical</ion-label>
+          <ion-label>Técnico</ion-label>
         </ion-segment-button>
       </ion-segment>
 
-      <!-- Dashboard de Negocio -->
-      <div v-if="viewMode === 'business'" class="dashboard-section">
-        <h2 class="section-title">Business Metrics</h2>
-        <p class="section-subtitle">App performance and user engagement</p>
-        
-        <div class="grid-container">
-          <!-- Gráfico 1: Usuarios registrados (ChartJS) -->
-          <div class="chart-card">
-            <h3>User Growth</h3>
+      <!-- Tarjeta de Progreso -->
+      <div class="progress-card">
+        <h3>Objetivo: 1 Millón de Usuarios</h3>
+        <div class="progress-bar">
+          <div class="progress-fill" :style="{ width: (503738 / 1000000) * 100 + '%' }">
+            <span class="progress-label">{{ Math.round((503738 / 1000000) * 100) }}%</span>
+          </div>
+        </div>
+        <p class="progress-note">Registrados: 503,738 | Faltan: 496,262</p>
+      </div>
+
+      <!-- Panel de Negocio -->
+      <div v-if="viewMode === 'business'" class="dashboard-grid">
+        <!-- Fila superior: 3 gráficos -->
+        <div class="chart-row top-row">
+          <div class="chart-card business-chart">
+            <h3>Crecimiento de Usuarios</h3>
             <canvas ref="userGrowthChart"></canvas>
-            <p class="chart-note">Slow but steady growth. Needs improvement in acquisition.</p>
           </div>
-          
-          <!-- Gráfico 2: Actividad por funcionalidad (ApexCharts) -->
-          <div class="chart-card">
-            <h3>Feature Usage</h3>
+          <div class="chart-card business-chart">
+            <h3>Uso de Funcionalidades</h3>
             <div ref="featureUsageChart"></div>
-            <p class="chart-note">Predictions are the most used feature.</p>
           </div>
-          
-          <!-- Gráfico 3: Retención (ECharts) -->
-          <div class="chart-card">
-            <h3>User Retention</h3>
-            <div ref="retentionChart" style="height: 300px;"></div>
-            <p class="chart-note">Low retention after first week.</p>
+          <div class="chart-card business-chart">
+            <h3>Retención de Usuarios</h3>
+            <div ref="retentionChart" class="echart-container" :class="{ 'echart-container-loaded': chartLoaded }"></div>
           </div>
-          
-          <!-- Gráfico 4: Dispositivos (ChartJS) -->
-          <div class="chart-card">
-            <h3>Device Distribution</h3>
+        </div>
+
+        <!-- Fila inferior: 2 gráficos -->
+        <div class="chart-row bottom-row">
+          <div class="chart-card business-chart">
+            <h3>Distribución de Dispositivos</h3>
             <canvas ref="deviceChart"></canvas>
-            <p class="chart-note">Most users are on Android.</p>
           </div>
-          
-          <!-- Gráfico 5: Eventos en tiempo real (Propio) -->
-          <div class="chart-card">
-            <h3>Real-time Events</h3>
+          <div class="chart-card business-chart">
+            <h3>Eventos en Tiempo Real</h3>
             <div class="real-time-events">
               <div v-for="(event, index) in realTimeEvents" :key="index" class="event-item">
                 <span class="event-time">{{ event.time }}</span>
-                <span class="event-type" :class="event.type">{{ event.type }}</span>
+                <span class="event-type" :class="event.type">{{ getEventTypeTranslation(event.type) }}</span>
                 <span class="event-desc">{{ event.description }}</span>
               </div>
             </div>
-            <p class="chart-note">Live user activity stream.</p>
           </div>
         </div>
       </div>
 
-      <!-- Dashboard Técnico -->
-      <div v-if="viewMode === 'technical'" class="dashboard-section">
-        <h2 class="section-title">Technical Metrics</h2>
-        <p class="section-subtitle">App performance and stability</p>
-        
-        <div class="grid-container">
-          <!-- Gráfico 6: Rendimiento (ApexCharts) -->
-          <div class="chart-card">
-            <h3>App Performance</h3>
+      <!-- Panel Técnico -->
+      <div v-if="viewMode === 'technical'" class="dashboard-grid">
+        <!-- Fila superior: 3 gráficos -->
+        <div class="chart-row top-row">
+          <div class="chart-card technical-chart">
+            <h3>Rendimiento de la App</h3>
             <div ref="performanceChart"></div>
-            <p class="chart-note">Some screens need optimization.</p>
           </div>
-          
-          <!-- Gráfico 7: Errores (ECharts) -->
-          <div class="chart-card">
-            <h3>Error Tracking</h3>
-            <div ref="errorChart" style="height: 300px;"></div>
-            <p class="chart-note">Map integration causes most errors.</p>
+          <div class="chart-card technical-chart">
+            <h3>Seguimiento de Errores</h3>
+            <div ref="errorChart" class="echart-container"></div>
           </div>
-          
-          <!-- Gráfico 8: Tiempos de carga (ChartJS) -->
-          <div class="chart-card">
-            <h3>Load Times</h3>
-            <canvas ref="loadTimeChart"></canvas>
-            <p class="chart-note">Tournaments page loads slowly.</p>
+          <div class="chart-card technical-chart">
+            <h3>Problemas de UI</h3>
+            <div class="ui-issues">
+              <div v-for="(issue, index) in uiIssues" :key="index" class="issue-item">
+                <span class="issue-component">{{ issue.component }}</span>
+                <span class="issue-priority" :class="'priority-' + issue.priority.toLowerCase()">
+                  {{ issue.priority }}
+                </span>
+                <span class="issue-desc">{{ issue.issue }}</span>
+              </div>
+            </div>
           </div>
-          
-          <!-- Gráfico 9: Uso de API (Propio) -->
-          <div class="chart-card">
-            <h3>API Usage</h3>
+        </div>
+
+        <!-- Fila inferior: 2 gráficos -->
+        <div class="chart-row bottom-row">
+          <div class="chart-card technical-chart">
+            <h3>Uso de API</h3>
             <div class="api-usage">
               <div class="api-endpoint" v-for="(endpoint, index) in apiEndpoints" :key="index">
                 <div class="endpoint-name">{{ endpoint.name }}</div>
@@ -105,14 +103,10 @@
                 </div>
               </div>
             </div>
-            <p class="chart-note">Tournament data is most requested.</p>
           </div>
-          
-          <!-- Gráfico 10: Sesiones (ApexCharts) -->
-          <div class="chart-card">
-            <h3>Session Duration</h3>
+          <div class="chart-card technical-chart">
+            <h3>Duración de Sesión</h3>
             <div ref="sessionChart"></div>
-            <p class="chart-note">Most sessions are short (under 2 min).</p>
           </div>
         </div>
       </div>
@@ -121,16 +115,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { 
-  IonPage, 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
-  IonContent,
-  IonSegment,
-  IonSegmentButton,
-  IonLabel
+  IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
+  IonSegment, IonSegmentButton, IonLabel
 } from '@ionic/vue';
 import Chart from 'chart.js/auto';
 import ApexCharts from 'apexcharts';
@@ -170,44 +158,196 @@ export default defineComponent({
   },
   setup() {
     const viewMode = ref('business');
+    const chartLoaded = ref(false);
     
-    // Datos para gráficos de negocio
+    // Referencias a gráficos
     const userGrowthChart = ref<HTMLCanvasElement | null>(null);
     const featureUsageChart = ref<HTMLElement | null>(null);
     const retentionChart = ref<HTMLElement | null>(null);
     const deviceChart = ref<HTMLCanvasElement | null>(null);
-    
-    // Datos para gráficos técnicos
     const performanceChart = ref<HTMLElement | null>(null);
     const errorChart = ref<HTMLElement | null>(null);
-    const loadTimeChart = ref<HTMLCanvasElement | null>(null);
     const sessionChart = ref<HTMLElement | null>(null);
     
-    // Datos de ejemplo para simular éxito medio-bajo
+    // Datos reales
     const realTimeEvents = ref([
-      { time: '10:30', type: 'login', description: 'User logged in' },
-      { time: '10:31', type: 'predict', description: 'Prediction made' },
-      { time: '10:33', type: 'view', description: 'News viewed' },
-      { time: '10:35', type: 'logout', description: 'User logged out' }
+      { time: '10:30', type: 'login', description: 'Usuario inició sesión' },
+      { time: '10:31', type: 'predict', description: 'Predicción realizada' },
+      { time: '10:33', type: 'view', description: 'Torneo visualizado' },
+      { time: '10:35', type: 'logout', description: 'Usuario cerró sesión' }
     ]);
     
     const apiEndpoints = ref([
-      { name: '/api/tournaments', usage: 45 },
-      { name: '/api/players', usage: 30 },
-      { name: '/api/news', usage: 15 },
-      { name: '/api/predictions', usage: 10 }
+      { name: '/api/torneos', usage: 65 },
+      { name: '/api/noticias', usage: 50 },
+      { name: '/api/predicciones', usage: 35 },
+      { name: '/api/jugadores', usage: 25 }
     ]);
     
-    // Simular eventos en tiempo real
+    const uiIssues = ref([
+      { component: 'Cabecera', issue: 'Tipografía inconsistente', priority: 'Alta' },
+      { component: 'Página Torneos', issue: 'Espaciado irregular', priority: 'Media' },
+      { component: 'Pie de página', issue: 'Colores no coinciden', priority: 'Baja' }
+    ]);
+
+    // Traducción de tipos de eventos
+    const getEventTypeTranslation = (type: string) => {
+      const translations: Record<string, string> = {
+        'login': 'Inicio',
+        'predict': 'Predicción',
+        'view': 'Visualización',
+        'logout': 'Cierre'
+      };
+      return translations[type] || type;
+    };
+
+    // Configuración para Gráfico de Retención
+    const retentionChartOptions = {
+      tooltip: { 
+        trigger: 'axis',
+        confine: true,
+        formatter: '{b}<br/>{a0}: {c0}%<br/>{a1}: {c1}%<br/>{a2}: {c2}%'
+      },
+      legend: { 
+        data: ['Día 1', 'Día 7', 'Día 30'],
+        bottom: 0,
+        itemWidth: 12,
+        itemHeight: 12,
+        textStyle: {
+          fontSize: 10
+        }
+      },
+      grid: { 
+        top: '15%',
+        left: '3%',
+        right: '4%',
+        bottom: '20%',
+        containLabel: true 
+      },
+      xAxis: {
+        type: 'category',
+        data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+        axisLabel: {
+          fontSize: 10
+        }
+      },
+      yAxis: {
+        type: 'value',
+        max: 100,
+        axisLabel: { 
+          formatter: '{value}%',
+          fontSize: 10
+        }
+      },
+      series: [
+        {
+          name: 'Día 1',
+          type: 'line',
+          data: [100, 100, 100, 100, 100, 100],
+          lineStyle: { color: '#4CAF50', width: 2 },
+          symbol: 'circle',
+          symbolSize: 5,
+          itemStyle: { color: '#4CAF50' }
+        },
+        {
+          name: 'Día 7',
+          type: 'line',
+          data: [60, 65, 62, 68, 70, 65],
+          lineStyle: { color: '#2196F3', width: 2 },
+          symbol: 'circle',
+          symbolSize: 5,
+          itemStyle: { color: '#2196F3' }
+        },
+        {
+          name: 'Día 30',
+          type: 'line',
+          data: [30, 30, 30, 30, 30, 30],
+          lineStyle: { color: '#9E9E9E', width: 2 },
+          symbol: 'circle',
+          symbolSize: 5,
+          itemStyle: { color: '#9E9E9E' }
+        }
+      ]
+    };
+
+    // Configuración para Gráfico de Errores
+    const errorChartOptions = {
+      backgroundColor: 'transparent',
+      tooltip: { 
+        trigger: 'item',
+        formatter: '{b}: {c} ({d}%)',
+        confine: true
+      },
+      legend: { 
+        orient: 'vertical',
+        right: 10,
+        top: 'center',
+        itemWidth: 10,
+        itemHeight: 10,
+        textStyle: {
+          fontSize: 10,
+          color: '#333'
+        }
+      },
+      series: [{
+        name: 'Fuentes de Error',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['45%', '50%'],
+        avoidLabelOverlap: true,
+        itemStyle: {
+          borderRadius: 5,
+          borderColor: '#fff',
+          borderWidth: 1
+        },
+        label: {
+          show: true,
+          fontSize: 10,
+          color: '#333',
+          formatter: '{b}: {d}%'
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 12,
+            fontWeight: 'bold'
+          },
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        },
+        labelLine: {
+          show: true,
+          length: 5,
+          length2: 10,
+          lineStyle: {
+            color: '#999'
+          }
+        },
+        data: [
+          { value: 45, name: 'Mapa', itemStyle: { color: '#FF6384' } },
+          { value: 25, name: 'API', itemStyle: { color: '#36A2EB' } },
+          { value: 15, name: 'Autenticación', itemStyle: { color: '#FFCE56' } },
+          { value: 10, name: 'Interfaz', itemStyle: { color: '#4BC0C0' } },
+          { value: 5, name: 'Otros', itemStyle: { color: '#9966FF' } }
+        ]
+      }]
+    };
+
+    let retentionChartInstance: echarts.ECharts | null = null;
+    let errorChartInstance: echarts.ECharts | null = null;
+
     const simulateRealTimeEvents = () => {
       const eventTypes = ['login', 'predict', 'view', 'logout'];
       const descriptions = [
-        'User logged in',
-        'Prediction made',
-        'News viewed',
-        'Tournament checked',
-        'Player stats viewed',
-        'User logged out'
+        'Usuario inició sesión',
+        'Predicción en torneo',
+        'Torneo visualizado',
+        'Noticias vistas',
+        'Estadísticas de jugador',
+        'Usuario cerró sesión'
       ];
       
       setInterval(() => {
@@ -224,34 +364,32 @@ export default defineComponent({
       }, 5000);
     };
     
-    // Inicializar gráficos
-    const initCharts = () => {
+    const initCharts = async () => {
+      await nextTick();
+      
       // Gráfico 1: Crecimiento de usuarios (ChartJS)
       if (userGrowthChart.value) {
         new Chart(userGrowthChart.value, {
           type: 'line',
           data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
             datasets: [{
-              label: 'Registered Users',
-              data: [120, 190, 230, 270, 310, 350],
-              borderColor: '#c3ff00',
-              backgroundColor: 'rgba(195, 255, 0, 0.1)',
+              label: 'Usuarios Registrados',
+              data: [320000, 380000, 430000, 470000, 503738, 550000],
+              borderColor: '#4CAF50',
+              backgroundColor: 'rgba(76, 175, 80, 0.1)',
               tension: 0.4,
               fill: true
             }]
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
-              legend: {
-                display: false
-              }
+              legend: { display: false }
             },
             scales: {
-              y: {
-                beginAtZero: true
-              }
+              y: { beginAtZero: false }
             }
           }
         });
@@ -261,25 +399,31 @@ export default defineComponent({
       if (featureUsageChart.value) {
         const chart = new ApexCharts(featureUsageChart.value, {
           series: [{
-            name: 'Usage',
-            data: [45, 70, 30, 50, 25]
+            name: 'Uso',
+            data: [65, 50, 35]
           }],
           chart: {
             type: 'bar',
-            height: 300
+            height: '100%',
+            background: 'transparent'
           },
-          colors: ['#c3ff00'],
+          colors: ['#4CAF50'],
           plotOptions: {
             bar: {
               borderRadius: 4,
               horizontal: true,
             }
           },
-          dataLabels: {
-            enabled: false
-          },
+          dataLabels: { enabled: false },
           xaxis: {
-            categories: ['Predictions', 'Tournaments', 'News', 'Ranking', 'Profile']
+            categories: ['Torneos', 'Noticias', 'Predicciones']
+          },
+          tooltip: {
+            y: {
+              formatter: function(val: number) {
+                return val + "%";
+              }
+            }
           }
         });
         chart.render();
@@ -287,79 +431,14 @@ export default defineComponent({
       
       // Gráfico 3: Retención de usuarios (ECharts)
       if (retentionChart.value) {
-        const chart = echarts.init(retentionChart.value);
-        chart.setOption({
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'shadow'
-            }
-          },
-          legend: {
-            data: ['Day 1', 'Day 7', 'Day 30']
-          },
-          grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-          },
-          xAxis: {
-            type: 'category',
-            data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
-          },
-          yAxis: {
-            type: 'value',
-            max: 100,
-            axisLabel: {
-              formatter: '{value}%'
-            }
-          },
-          series: [
-            {
-              name: 'Day 1',
-              type: 'line',
-              data: [100, 100, 100, 100, 100, 100],
-              lineStyle: {
-                color: '#c3ff00',
-                width: 4
-              },
-              symbol: 'circle',
-              symbolSize: 8,
-              itemStyle: {
-                color: '#c3ff00'
-              }
-            },
-            {
-              name: 'Day 7',
-              type: 'line',
-              data: [45, 50, 48, 52, 55, 50],
-              lineStyle: {
-                color: '#2e2e34',
-                width: 3
-              },
-              symbol: 'circle',
-              symbolSize: 6,
-              itemStyle: {
-                color: '#2e2e34'
-              }
-            },
-            {
-              name: 'Day 30',
-              type: 'line',
-              data: [15, 18, 20, 22, 25, 20],
-              lineStyle: {
-                color: '#888',
-                width: 2
-              },
-              symbol: 'circle',
-              symbolSize: 4,
-              itemStyle: {
-                color: '#888'
-              }
-            }
-          ]
-        });
+        retentionChartInstance = echarts.init(retentionChart.value);
+        retentionChartInstance.setOption(retentionChartOptions);
+        
+        setTimeout(() => {
+          retentionChartInstance?.resize();
+          retentionChartInstance?.setOption(retentionChartOptions, true);
+          chartLoaded.value = true;
+        }, 100);
       }
       
       // Gráfico 4: Dispositivos (ChartJS)
@@ -369,157 +448,116 @@ export default defineComponent({
           data: {
             labels: ['Android', 'iOS', 'Web'],
             datasets: [{
-              data: [75, 20, 5],
-              backgroundColor: [
-                '#c3ff00',
-                '#2e2e34',
-                '#888'
-              ],
+              data: [55, 35, 10],
+              backgroundColor: ['#4CAF50', '#2196F3', '#9E9E9E'],
               borderWidth: 0
             }]
           },
           options: {
             responsive: true,
-            plugins: {
-              legend: {
-                position: 'bottom'
-              }
+            maintainAspectRatio: false,
+            plugins: { 
+              legend: { 
+                position: 'bottom',
+                labels: {
+                  font: {
+                    size: 10
+                  }
+                }
+              } 
             }
           }
         });
       }
       
-      // Gráfico 6: Rendimiento (ApexCharts)
+      // Gráfico 5: Rendimiento (ApexCharts)
       if (performanceChart.value) {
         const chart = new ApexCharts(performanceChart.value, {
           series: [{
-            name: 'Render Time (ms)',
-            data: [120, 90, 150, 80, 200, 70]
+            name: 'Tiempo (ms)',
+            data: [800, 750, 900, 850, 950, 700]
           }],
           chart: {
             type: 'radar',
-            height: 350
+            height: '100%',
+            background: 'transparent'
           },
-          colors: ['#c3ff00'],
+          colors: ['#2196F3'],
           xaxis: {
-            categories: ['Login', 'Tournaments', 'Predictions', 'News', 'Ranking', 'Profile']
+            categories: ['Inicio', 'Torneos', 'Predicciones', 'Noticias', 'Ranking', 'Perfil']
           },
-          yaxis: {
-            show: false
+          yaxis: { show: false },
+          tooltip: {
+            y: {
+              formatter: function(val: number) {
+                return val + "ms";
+              }
+            }
           }
         });
         chart.render();
       }
       
-      // Gráfico 7: Errores (ECharts)
+      // Gráfico 6: Errores (ECharts)
       if (errorChart.value) {
-        const chart = echarts.init(errorChart.value);
-        chart.setOption({
-          tooltip: {
-            trigger: 'item'
-          },
-          legend: {
-            top: '5%',
-            left: 'center'
-          },
-          series: [
-            {
-              name: 'Error Sources',
-              type: 'pie',
-              radius: ['40%', '70%'],
-              avoidLabelOverlap: false,
-              itemStyle: {
-                borderRadius: 10,
-                borderColor: '#fff',
-                borderWidth: 2
-              },
-              label: {
-                show: false,
-                position: 'center'
-              },
-              emphasis: {
-                label: {
-                  show: true,
-                  fontSize: '18',
-                  fontWeight: 'bold'
-                }
-              },
-              labelLine: {
-                show: false
-              },
-              data: [
-                { value: 45, name: 'Map Integration' },
-                { value: 25, name: 'API Calls' },
-                { value: 15, name: 'Authentication' },
-                { value: 10, name: 'UI Rendering' },
-                { value: 5, name: 'Other' }
-              ]
-            }
-          ]
-        });
+        errorChartInstance = echarts.init(errorChart.value);
+        errorChartInstance.setOption(errorChartOptions);
+        
+        setTimeout(() => {
+          errorChartInstance?.resize();
+          errorChartInstance?.setOption(errorChartOptions, true);
+        }, 150);
       }
       
-      // Gráfico 8: Tiempos de carga (ChartJS)
-      if (loadTimeChart.value) {
-        new Chart(loadTimeChart.value, {
-          type: 'bar',
-          data: {
-            labels: ['Login', 'Tournaments', 'Predictions', 'News', 'Ranking'],
-            datasets: [{
-              label: 'Load Time (ms)',
-              data: [800, 1500, 900, 1100, 950],
-              backgroundColor: [
-                'rgba(195, 255, 0, 0.7)',
-                'rgba(46, 46, 52, 0.7)',
-                'rgba(195, 255, 0, 0.7)',
-                'rgba(46, 46, 52, 0.7)',
-                'rgba(195, 255, 0, 0.7)'
-              ],
-              borderColor: [
-                '#c3ff00',
-                '#2e2e34',
-                '#c3ff00',
-                '#2e2e34',
-                '#c3ff00'
-              ],
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            },
-            plugins: {
-              legend: {
-                display: false
-              }
-            }
-          }
-        });
-      }
-      
-      // Gráfico 10: Duración de sesión (ApexCharts)
+      // Gráfico 7: Duración de sesión (ApexCharts)
       if (sessionChart.value) {
         const chart = new ApexCharts(sessionChart.value, {
-          series: [{
-            name: 'Sessions',
-            data: [120, 90, 70, 50, 30, 20]
-          }],
-          chart: {
-            type: 'pie',
-            height: 350
+          series: [45, 30, 15, 7, 3],
+          chart: { 
+            type: 'pie', 
+            height: '100%',
+            background: 'transparent'
           },
-          labels: ['<1 min', '1-2 min', '2-5 min', '5-10 min', '10-20 min', '>20 min'],
-          colors: ['#c3ff00', '#2e2e34', '#888', '#aaa', '#ccc', '#eee'],
+          labels: ['<1 min', '1-2 min', '2-5 min', '5-10 min', '>10 min'],
+          colors: ['#2196F3', '#4CAF50', '#FFC107', '#FF9800', '#9E9E9E'],
+          legend: {
+            position: 'right',
+            horizontalAlign: 'center',
+            fontSize: '10px',
+            fontFamily: 'Roboto, sans-serif',
+            markers: {
+              width: 10,
+              height: 10,
+              radius: 5
+            },
+            itemMargin: {
+              horizontal: 0,
+              vertical: 3
+            },
+            formatter: function(seriesName: string, opts: any) {
+              return `${seriesName}: ${opts.w.globals.series[opts.seriesIndex]}%`;
+            }
+          },
+          dataLabels: {
+            enabled: false
+          },
+          plotOptions: {
+            pie: {
+              donut: {
+                size: '60%'
+              }
+            }
+          },
+          tooltip: {
+            y: {
+              formatter: function(val: number) {
+                return val + "%";
+              }
+            }
+          },
           responsive: [{
-            breakpoint: 480,
+            breakpoint: 768,
             options: {
-              chart: {
-                width: 200
-              },
               legend: {
                 position: 'bottom'
               }
@@ -529,29 +567,51 @@ export default defineComponent({
         chart.render();
       }
     };
+
+    const handleResize = () => {
+      if (retentionChartInstance) {
+        retentionChartInstance.resize();
+        retentionChartInstance.setOption(retentionChartOptions, true);
+      }
+      if (errorChartInstance) {
+        errorChartInstance.resize();
+        errorChartInstance.setOption(errorChartOptions, true);
+      }
+    };
     
     onMounted(() => {
       initCharts();
       simulateRealTimeEvents();
+      window.addEventListener('resize', handleResize);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('resize', handleResize);
+      if (retentionChartInstance) retentionChartInstance.dispose();
+      if (errorChartInstance) errorChartInstance.dispose();
     });
     
     const changeView = () => {
-      // Re-inicializar gráficos cuando cambia la vista
-      setTimeout(initCharts, 50);
+      setTimeout(() => {
+        initCharts();
+        handleResize();
+      }, 50);
     };
     
     return {
       viewMode,
+      chartLoaded,
       userGrowthChart,
       featureUsageChart,
       retentionChart,
       deviceChart,
       performanceChart,
       errorChart,
-      loadTimeChart,
       sessionChart,
       realTimeEvents,
       apiEndpoints,
+      uiIssues,
+      getEventTypeTranslation,
       changeView
     };
   }
@@ -559,147 +619,282 @@ export default defineComponent({
 </script>
 
 <style scoped>
+/* Estilos generales */
 .dashboard-content {
   --background: #f8f9fa;
-  padding: 16px;
+  height: calc(100vh - 56px);
+  padding: 12px;
+  overflow: hidden;
 }
 
-.section-title {
-  color: #2e2e34;
-  margin-top: 20px;
-  margin-bottom: 5px;
-  font-size: 1.5rem;
+.view-mode-selector {
+  margin-bottom: 12px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.progress-card {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+}
+
+.progress-bar {
+  height: 20px;
+  background: #f0f0f0;
+  border-radius: 10px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  transition: width 0.5s;
+}
+
+.progress-label {
+  color: white;
   font-weight: bold;
+  margin-right: 6px;
+  font-size: 0.7rem;
 }
 
-.section-subtitle {
+.progress-note {
   color: #666;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
+  font-size: 0.7rem;
+  margin-top: 4px;
 }
 
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 90px);
+}
+
+.chart-row {
+  display: flex;
+  flex: 1;
+  gap: 12px;
+  margin-bottom: 12px;
+  min-height: 0;
+}
+
+.top-row {
+  flex: 1.5;
+}
+
+.bottom-row {
+  flex: 1;
 }
 
 .chart-card {
+  flex: 1;
   background: white;
-  border-radius: 10px;
-  padding: 15px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+}
+
+.business-chart {
+  border-left: 3px solid #4CAF50;
+}
+
+.technical-chart {
+  border-left: 3px solid #2196F3;
 }
 
 .chart-card h3 {
   color: #2e2e34;
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 1.1rem;
+  margin: 0 0 8px 0;
+  font-size: 0.9rem;
+  font-family: 'Roboto', sans-serif;
 }
 
-.chart-note {
-  color: #666;
-  font-size: 0.8rem;
-  margin-top: 10px;
-  margin-bottom: 0;
-  font-style: italic;
+.echart-container {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  opacity: 1;
+  background-color: transparent !important;
 }
 
-.real-time-events {
-  max-height: 300px;
+canvas, .apexcharts-canvas, .echarts {
+  flex: 1;
+  width: 100% !important;
+  min-height: 0 !important;
+  background-color: transparent !important;
+}
+
+.real-time-events, .ui-issues, .api-usage {
+  flex: 1;
   overflow-y: auto;
+  min-height: 0;
+  font-size: 0.8rem;
 }
 
-.event-item {
-  padding: 8px 0;
+.event-item, .issue-item {
+  padding: 6px 0;
   border-bottom: 1px solid #eee;
   display: grid;
-  grid-template-columns: 50px 80px 1fr;
-  gap: 10px;
+  grid-template-columns: 45px 70px 1fr;
+  gap: 6px;
   align-items: center;
+  font-size: 0.75rem;
 }
 
-.event-time {
+.event-time, .issue-component {
   color: #666;
-  font-size: 0.8rem;
 }
 
-.event-type {
-  font-size: 0.8rem;
-  padding: 3px 6px;
-  border-radius: 4px;
+.event-type, .issue-priority {
+  font-size: 0.65rem;
+  padding: 2px 4px;
+  border-radius: 3px;
   text-align: center;
 }
 
 .event-type.login {
-  background-color: rgba(0, 128, 0, 0.1);
-  color: green;
+  background-color: rgba(76, 175, 80, 0.1);
+  color: #4CAF50;
 }
 
 .event-type.predict {
-  background-color: rgba(195, 255, 0, 0.2);
-  color: #2e2e34;
+  background-color: rgba(33, 150, 243, 0.1);
+  color: #2196F3;
 }
 
 .event-type.view {
-  background-color: rgba(0, 0, 255, 0.1);
-  color: blue;
+  background-color: rgba(255, 152, 0, 0.1);
+  color: #FF9800;
 }
 
 .event-type.logout {
-  background-color: rgba(255, 0, 0, 0.1);
-  color: red;
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #F44336;
 }
 
-.event-desc {
-  font-size: 0.9rem;
-  color: #333;
+.priority-alta {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #F44336;
+}
+
+.priority-media {
+  background-color: rgba(255, 152, 0, 0.1);
+  color: #FF9800;
+}
+
+.priority-baja {
+  background-color: rgba(158, 158, 158, 0.1);
+  color: #9E9E9E;
 }
 
 .api-usage {
-  margin-top: 10px;
+  margin-top: 6px;
 }
 
 .api-endpoint {
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .endpoint-name {
-  font-size: 0.9rem;
-  margin-bottom: 5px;
-  color: #2e2e34;
+  font-size: 0.75rem;
+  margin-bottom: 3px;
 }
 
 .endpoint-bar {
-  height: 20px;
+  height: 14px;
   background-color: #eee;
-  border-radius: 10px;
+  border-radius: 7px;
   position: relative;
   overflow: hidden;
 }
 
 .bar-fill {
   height: 100%;
-  background-color: #c3ff00;
-  border-radius: 10px;
-  transition: width 0.5s ease;
+  border-radius: 7px;
+}
+
+.business-chart .bar-fill {
+  background-color: #4CAF50;
+}
+
+.technical-chart .bar-fill {
+  background-color: #2196F3;
 }
 
 .bar-label {
   position: absolute;
-  right: 5px;
+  right: 3px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: #2e2e34;
 }
 
-/* Responsive adjustments */
+/* Estilos específicos para gráficos */
+.technical-chart .apexcharts-legend {
+  right: 5px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 40% !important;
+  max-height: 90% !important;
+  overflow-y: auto !important;
+  padding: 5px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-radius: 5px !important;
+}
+
+.technical-chart .apexcharts-legend-series {
+  display: flex !important;
+  align-items: center !important;
+  margin: 3px 0 !important;
+  padding: 2px 5px !important;
+}
+
+.technical-chart .apexcharts-legend-marker {
+  margin-right: 5px !important;
+}
+
+.technical-chart .apexcharts-legend-text {
+  font-size: 0.7rem !important;
+  color: #333 !important;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .chart-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .chart-card {
+    min-height: 250px;
+  }
+  
+  .echart-container {
+    min-height: 220px;
+  }
+}
+
 @media (max-width: 768px) {
-  .grid-container {
-    grid-template-columns: 1fr;
+  .technical-chart .apexcharts-legend {
+    position: relative !important;
+    width: 100% !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+    margin-top: 10px !important;
   }
 }
 </style>
