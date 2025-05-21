@@ -1,5 +1,5 @@
 <template>
-  <ion-page>
+  <ion-page class="page">
     <ion-header>
       <ion-toolbar>
         <ion-title>Analíticas PadelResults</ion-title>
@@ -515,7 +515,7 @@ export default defineComponent({
           series: [45, 30, 15, 7, 3],
           chart: { 
             type: 'pie', 
-            height: '100%',
+            height: '80%',
             background: 'transparent',
             width: '100%'
           },
