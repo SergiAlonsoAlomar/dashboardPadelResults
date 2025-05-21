@@ -395,12 +395,12 @@ export default defineComponent({
         });
       }
       
-      // Gráfico 2: Uso de funcionalidades (ApexCharts)
+      // Gráfico 2: Uso de funcionalidades (ApexCharts) - Modificado según solicitud
       if (featureUsageChart.value) {
         const chart = new ApexCharts(featureUsageChart.value, {
           series: [{
             name: 'Uso',
-            data: [65, 50, 35]
+            data: [60, 45, 30, 15]
           }],
           chart: {
             type: 'bar',
@@ -416,7 +416,7 @@ export default defineComponent({
           },
           dataLabels: { enabled: false },
           xaxis: {
-            categories: ['Torneos', 'Noticias', 'Predicciones']
+            categories: ['Torneos', 'Noticias', 'Predicciones', 'Otros']
           },
           tooltip: {
             y: {
@@ -509,14 +509,15 @@ export default defineComponent({
         }, 150);
       }
       
-      // Gráfico 7: Duración de sesión (ApexCharts)
+      // Gráfico 7: Duración de sesión (ApexCharts) - Modificado para ser más compacto
       if (sessionChart.value) {
         const chart = new ApexCharts(sessionChart.value, {
           series: [45, 30, 15, 7, 3],
           chart: { 
             type: 'pie', 
             height: '100%',
-            background: 'transparent'
+            background: 'transparent',
+            width: '100%'
           },
           labels: ['<1 min', '1-2 min', '2-5 min', '5-10 min', '>10 min'],
           colors: ['#2196F3', '#4CAF50', '#FFC107', '#FF9800', '#9E9E9E'],
@@ -526,13 +527,13 @@ export default defineComponent({
             fontSize: '10px',
             fontFamily: 'Roboto, sans-serif',
             markers: {
-              width: 10,
-              height: 10,
-              radius: 5
+              width: 8,
+              height: 8,
+              radius: 4
             },
             itemMargin: {
               horizontal: 0,
-              vertical: 3
+              vertical: 2
             },
             formatter: function(seriesName: string, opts: any) {
               return `${seriesName}: ${opts.w.globals.series[opts.seriesIndex]}%`;
@@ -544,7 +545,10 @@ export default defineComponent({
           plotOptions: {
             pie: {
               donut: {
-                size: '60%'
+                size: '65%',
+                labels: {
+                  show: false
+                }
               }
             }
           },
@@ -623,13 +627,14 @@ export default defineComponent({
 .dashboard-content {
   --background: #f8f9fa;
   height: calc(100vh - 56px);
-  padding: 12px;
-  overflow: hidden;
+  padding: 10px;
+  overflow: auto;
+  zoom: 0.95;
 }
 
 .view-mode-selector {
-  margin-bottom: 12px;
-  max-width: 400px;
+  margin-bottom: 10px;
+  max-width: 380px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -637,16 +642,16 @@ export default defineComponent({
 .progress-card {
   background: white;
   border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
+  padding: 10px;
+  margin-bottom: 10px;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
 }
 
 .progress-bar {
-  height: 20px;
+  height: 18px;
   background: #f0f0f0;
-  border-radius: 10px;
-  margin: 10px 0;
+  border-radius: 9px;
+  margin: 8px 0;
   overflow: hidden;
 }
 
@@ -662,27 +667,27 @@ export default defineComponent({
 .progress-label {
   color: white;
   font-weight: bold;
-  margin-right: 6px;
-  font-size: 0.7rem;
+  margin-right: 5px;
+  font-size: 0.65rem;
 }
 
 .progress-note {
   color: #666;
-  font-size: 0.7rem;
-  margin-top: 4px;
+  font-size: 0.65rem;
+  margin-top: 3px;
 }
 
 .dashboard-grid {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 90px);
+  height: calc(100% - 80px);
 }
 
 .chart-row {
   display: flex;
   flex: 1;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 10px;
   min-height: 0;
 }
 
@@ -698,7 +703,7 @@ export default defineComponent({
   flex: 1;
   background: white;
   border-radius: 8px;
-  padding: 12px;
+  padding: 10px;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
@@ -716,15 +721,15 @@ export default defineComponent({
 
 .chart-card h3 {
   color: #2e2e34;
-  margin: 0 0 8px 0;
-  font-size: 0.9rem;
+  margin: 0 0 6px 0;
+  font-size: 0.85rem;
   font-family: 'Roboto', sans-serif;
 }
 
 .echart-container {
   width: 100%;
   height: 100%;
-  min-height: 240px;
+  min-height: 220px;
   opacity: 1;
   background-color: transparent !important;
 }
@@ -740,17 +745,17 @@ canvas, .apexcharts-canvas, .echarts {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 }
 
 .event-item, .issue-item {
-  padding: 6px 0;
+  padding: 5px 0;
   border-bottom: 1px solid #eee;
   display: grid;
-  grid-template-columns: 45px 70px 1fr;
-  gap: 6px;
+  grid-template-columns: 40px 65px 1fr;
+  gap: 5px;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
 }
 
 .event-time, .issue-component {
@@ -758,7 +763,7 @@ canvas, .apexcharts-canvas, .echarts {
 }
 
 .event-type, .issue-priority {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   padding: 2px 4px;
   border-radius: 3px;
   text-align: center;
@@ -800,29 +805,29 @@ canvas, .apexcharts-canvas, .echarts {
 }
 
 .api-usage {
-  margin-top: 6px;
+  margin-top: 5px;
 }
 
 .api-endpoint {
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .endpoint-name {
-  font-size: 0.75rem;
-  margin-bottom: 3px;
+  font-size: 0.7rem;
+  margin-bottom: 2px;
 }
 
 .endpoint-bar {
-  height: 14px;
+  height: 12px;
   background-color: #eee;
-  border-radius: 7px;
+  border-radius: 6px;
   position: relative;
   overflow: hidden;
 }
 
 .bar-fill {
   height: 100%;
-  border-radius: 7px;
+  border-radius: 6px;
 }
 
 .business-chart .bar-fill {
@@ -838,7 +843,7 @@ canvas, .apexcharts-canvas, .echarts {
   right: 3px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: #2e2e34;
 }
 
@@ -858,16 +863,18 @@ canvas, .apexcharts-canvas, .echarts {
 .technical-chart .apexcharts-legend-series {
   display: flex !important;
   align-items: center !important;
-  margin: 3px 0 !important;
+  margin: 2px 0 !important;
   padding: 2px 5px !important;
 }
 
 .technical-chart .apexcharts-legend-marker {
-  margin-right: 5px !important;
+  margin-right: 4px !important;
+  width: 8px !important;
+  height: 8px !important;
 }
 
 .technical-chart .apexcharts-legend-text {
-  font-size: 0.7rem !important;
+  font-size: 0.65rem !important;
   color: #333 !important;
 }
 
@@ -875,26 +882,39 @@ canvas, .apexcharts-canvas, .echarts {
 @media (max-width: 1200px) {
   .chart-row {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
   
   .chart-card {
-    min-height: 250px;
+    min-height: 220px;
   }
   
   .echart-container {
-    min-height: 220px;
+    min-height: 200px;
   }
 }
 
 @media (max-width: 768px) {
+  .dashboard-content {
+    zoom: 0.9;
+  }
+  
   .technical-chart .apexcharts-legend {
     position: relative !important;
     width: 100% !important;
     top: auto !important;
     right: auto !important;
     transform: none !important;
-    margin-top: 10px !important;
+    margin-top: 8px !important;
+  }
+  
+  .chart-card h3 {
+    font-size: 0.8rem;
+  }
+  
+  .event-item, .issue-item {
+    font-size: 0.65rem;
+    grid-template-columns: 35px 60px 1fr;
   }
 }
 </style>
