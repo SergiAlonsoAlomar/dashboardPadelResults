@@ -627,13 +627,12 @@ export default defineComponent({
 .dashboard-content {
   --background: #f8f9fa;
   height: calc(100vh - 56px);
-  padding: 10px;
-  overflow: auto;
-  zoom: 0.95;
+  padding: 1vh 1vw;
+  overflow: hidden;
 }
 
 .view-mode-selector {
-  margin-bottom: 10px;
+  margin-bottom: 1vh;
   max-width: 380px;
   margin-left: auto;
   margin-right: auto;
@@ -642,16 +641,16 @@ export default defineComponent({
 .progress-card {
   background: white;
   border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 1vh 1vw;
+  margin-bottom: 1vh;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
 }
 
 .progress-bar {
-  height: 18px;
+  height: 2vh;
   background: #f0f0f0;
   border-radius: 9px;
-  margin: 8px 0;
+  margin: 0.8vh 0;
   overflow: hidden;
 }
 
@@ -667,27 +666,27 @@ export default defineComponent({
 .progress-label {
   color: white;
   font-weight: bold;
-  margin-right: 5px;
+  margin-right: 0.5vw;
   font-size: 0.65rem;
 }
 
 .progress-note {
   color: #666;
   font-size: 0.65rem;
-  margin-top: 3px;
+  margin-top: 0.3vh;
 }
 
 .dashboard-grid {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 80px);
+  height: calc(100% - 10vh);
 }
 
 .chart-row {
   display: flex;
   flex: 1;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 1vw;
+  margin-bottom: 1vh;
   min-height: 0;
 }
 
@@ -703,12 +702,13 @@ export default defineComponent({
   flex: 1;
   background: white;
   border-radius: 8px;
-  padding: 10px;
+  padding: 1vh 1vw;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   min-height: 0;
   position: relative;
+  height: 100%;
 }
 
 .business-chart {
@@ -721,7 +721,7 @@ export default defineComponent({
 
 .chart-card h3 {
   color: #2e2e34;
-  margin: 0 0 6px 0;
+  margin: 0 0 0.6vh 0;
   font-size: 0.85rem;
   font-family: 'Roboto', sans-serif;
 }
@@ -729,7 +729,7 @@ export default defineComponent({
 .echart-container {
   width: 100%;
   height: 100%;
-  min-height: 220px;
+  min-height: 20vh;
   opacity: 1;
   background-color: transparent !important;
 }
@@ -749,11 +749,11 @@ canvas, .apexcharts-canvas, .echarts {
 }
 
 .event-item, .issue-item {
-  padding: 5px 0;
+  padding: 0.5vh 0;
   border-bottom: 1px solid #eee;
   display: grid;
-  grid-template-columns: 40px 65px 1fr;
-  gap: 5px;
+  grid-template-columns: 4vw 6vw 1fr;
+  gap: 0.5vw;
   align-items: center;
   font-size: 0.7rem;
 }
@@ -764,7 +764,7 @@ canvas, .apexcharts-canvas, .echarts {
 
 .event-type, .issue-priority {
   font-size: 0.6rem;
-  padding: 2px 4px;
+  padding: 0.2vh 0.4vw;
   border-radius: 3px;
   text-align: center;
 }
@@ -805,20 +805,20 @@ canvas, .apexcharts-canvas, .echarts {
 }
 
 .api-usage {
-  margin-top: 5px;
+  margin-top: 0.5vh;
 }
 
 .api-endpoint {
-  margin-bottom: 5px;
+  margin-bottom: 0.5vh;
 }
 
 .endpoint-name {
   font-size: 0.7rem;
-  margin-bottom: 2px;
+  margin-bottom: 0.2vh;
 }
 
 .endpoint-bar {
-  height: 12px;
+  height: 1.2vh;
   background-color: #eee;
   border-radius: 6px;
   position: relative;
@@ -840,7 +840,7 @@ canvas, .apexcharts-canvas, .echarts {
 
 .bar-label {
   position: absolute;
-  right: 3px;
+  right: 0.3vw;
   top: 50%;
   transform: translateY(-50%);
   font-size: 0.6rem;
@@ -849,13 +849,13 @@ canvas, .apexcharts-canvas, .echarts {
 
 /* Estilos específicos para gráficos */
 .technical-chart .apexcharts-legend {
-  right: 5px !important;
+  right: 0.5vw !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
   width: 40% !important;
   max-height: 90% !important;
   overflow-y: auto !important;
-  padding: 5px !important;
+  padding: 0.5vh !important;
   background: rgba(255, 255, 255, 0.7) !important;
   border-radius: 5px !important;
 }
@@ -863,12 +863,12 @@ canvas, .apexcharts-canvas, .echarts {
 .technical-chart .apexcharts-legend-series {
   display: flex !important;
   align-items: center !important;
-  margin: 2px 0 !important;
-  padding: 2px 5px !important;
+  margin: 0.2vh 0 !important;
+  padding: 0.2vh 0.5vw !important;
 }
 
 .technical-chart .apexcharts-legend-marker {
-  margin-right: 4px !important;
+  margin-right: 0.4vw !important;
   width: 8px !important;
   height: 8px !important;
 }
@@ -882,21 +882,21 @@ canvas, .apexcharts-canvas, .echarts {
 @media (max-width: 1200px) {
   .chart-row {
     flex-direction: column;
-    gap: 10px;
+    gap: 1vh;
   }
   
   .chart-card {
-    min-height: 220px;
+    min-height: 22vh;
   }
   
   .echart-container {
-    min-height: 200px;
+    min-height: 20vh;
   }
 }
 
 @media (max-width: 768px) {
   .dashboard-content {
-    zoom: 0.9;
+    padding: 1vh 2vw;
   }
   
   .technical-chart .apexcharts-legend {
@@ -905,7 +905,7 @@ canvas, .apexcharts-canvas, .echarts {
     top: auto !important;
     right: auto !important;
     transform: none !important;
-    margin-top: 8px !important;
+    margin-top: 0.8vh !important;
   }
   
   .chart-card h3 {
@@ -914,7 +914,7 @@ canvas, .apexcharts-canvas, .echarts {
   
   .event-item, .issue-item {
     font-size: 0.65rem;
-    grid-template-columns: 35px 60px 1fr;
+    grid-template-columns: 8vw 10vw 1fr;
   }
 }
 </style>
