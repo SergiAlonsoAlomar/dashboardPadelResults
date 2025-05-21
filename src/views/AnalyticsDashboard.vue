@@ -7,106 +7,108 @@
     </ion-header>
 
     <ion-content class="dashboard-content">
-      <ion-segment v-model="viewMode" @ionChange="changeView" class="view-mode-selector">
-        <ion-segment-button value="business">
-          <ion-label>Negocio</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="technical">
-          <ion-label>Técnico</ion-label>
-        </ion-segment-button>
-      </ion-segment>
+      <div class="content-wrapper">
+        <ion-segment v-model="viewMode" @ionChange="changeView" class="view-mode-selector">
+          <ion-segment-button value="business">
+            <ion-label>Negocio</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="technical">
+            <ion-label>Técnico</ion-label>
+          </ion-segment-button>
+        </ion-segment>
 
-      <!-- Tarjeta de Progreso -->
-      <div class="progress-card">
-        <h3>Objetivo: 1 Millón de Usuarios</h3>
-        <div class="progress-bar">
-          <div class="progress-fill" :style="{ width: (503738 / 1000000) * 100 + '%' }">
-            <span class="progress-label">{{ Math.round((503738 / 1000000) * 100) }}%</span>
-          </div>
-        </div>
-        <p class="progress-note">Registrados: 503,738 | Faltan: 496,262</p>
-      </div>
-
-      <!-- Panel de Negocio -->
-      <div v-if="viewMode === 'business'" class="dashboard-grid">
-        <!-- Fila superior: 3 gráficos -->
-        <div class="chart-row top-row">
-          <div class="chart-card business-chart">
-            <h3>Crecimiento de Usuarios</h3>
-            <canvas ref="userGrowthChart"></canvas>
-          </div>
-          <div class="chart-card business-chart">
-            <h3>Uso de Funcionalidades</h3>
-            <div ref="featureUsageChart"></div>
-          </div>
-          <div class="chart-card business-chart">
-            <h3>Retención de Usuarios</h3>
-            <div ref="retentionChart" class="echart-container" :class="{ 'echart-container-loaded': chartLoaded }"></div>
-          </div>
-        </div>
-
-        <!-- Fila inferior: 2 gráficos -->
-        <div class="chart-row bottom-row">
-          <div class="chart-card business-chart">
-            <h3>Distribución de Dispositivos</h3>
-            <canvas ref="deviceChart"></canvas>
-          </div>
-          <div class="chart-card business-chart">
-            <h3>Eventos en Tiempo Real</h3>
-            <div class="real-time-events">
-              <div v-for="(event, index) in realTimeEvents" :key="index" class="event-item">
-                <span class="event-time">{{ event.time }}</span>
-                <span class="event-type" :class="event.type">{{ getEventTypeTranslation(event.type) }}</span>
-                <span class="event-desc">{{ event.description }}</span>
-              </div>
+        <!-- Tarjeta de Progreso -->
+        <div class="progress-card">
+          <h3>Objetivo: 1 Millón de Usuarios</h3>
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: (503738 / 1000000) * 100 + '%' }">
+              <span class="progress-label">{{ Math.round((503738 / 1000000) * 100) }}%</span>
             </div>
           </div>
+          <p class="progress-note">Registrados: 503,738 | Faltan: 496,262</p>
         </div>
-      </div>
 
-      <!-- Panel Técnico -->
-      <div v-if="viewMode === 'technical'" class="dashboard-grid">
-        <!-- Fila superior: 3 gráficos -->
-        <div class="chart-row top-row">
-          <div class="chart-card technical-chart">
-            <h3>Rendimiento de la App</h3>
-            <div ref="performanceChart"></div>
-          </div>
-          <div class="chart-card technical-chart">
-            <h3>Seguimiento de Errores</h3>
-            <div ref="errorChart" class="echart-container"></div>
-          </div>
-          <div class="chart-card technical-chart">
-            <h3>Problemas de UI</h3>
-            <div class="ui-issues">
-              <div v-for="(issue, index) in uiIssues" :key="index" class="issue-item">
-                <span class="issue-component">{{ issue.component }}</span>
-                <span class="issue-priority" :class="'priority-' + issue.priority.toLowerCase()">
-                  {{ issue.priority }}
-                </span>
-                <span class="issue-desc">{{ issue.issue }}</span>
-              </div>
+        <!-- Panel de Negocio -->
+        <div v-if="viewMode === 'business'" class="dashboard-grid">
+          <!-- Fila superior: 3 gráficos -->
+          <div class="chart-row top-row">
+            <div class="chart-card business-chart">
+              <h3>Crecimiento de Usuarios</h3>
+              <canvas ref="userGrowthChart"></canvas>
+            </div>
+            <div class="chart-card business-chart">
+              <h3>Uso de Funcionalidades</h3>
+              <div ref="featureUsageChart"></div>
+            </div>
+            <div class="chart-card business-chart">
+              <h3>Retención de Usuarios</h3>
+              <div ref="retentionChart" class="echart-container" :class="{ 'echart-container-loaded': chartLoaded }"></div>
             </div>
           </div>
-        </div>
 
-        <!-- Fila inferior: 2 gráficos -->
-        <div class="chart-row bottom-row">
-          <div class="chart-card technical-chart">
-            <h3>Uso de API</h3>
-            <div class="api-usage">
-              <div class="api-endpoint" v-for="(endpoint, index) in apiEndpoints" :key="index">
-                <div class="endpoint-name">{{ endpoint.name }}</div>
-                <div class="endpoint-bar">
-                  <div class="bar-fill" :style="{ width: endpoint.usage + '%' }"></div>
-                  <span class="bar-label">{{ endpoint.usage }}%</span>
+          <!-- Fila inferior: 2 gráficos -->
+          <div class="chart-row bottom-row">
+            <div class="chart-card business-chart">
+              <h3>Distribución de Dispositivos</h3>
+              <canvas ref="deviceChart"></canvas>
+            </div>
+            <div class="chart-card business-chart">
+              <h3>Eventos en Tiempo Real</h3>
+              <div class="real-time-events">
+                <div v-for="(event, index) in realTimeEvents" :key="index" class="event-item">
+                  <span class="event-time">{{ event.time }}</span>
+                  <span class="event-type" :class="event.type">{{ getEventTypeTranslation(event.type) }}</span>
+                  <span class="event-desc">{{ event.description }}</span>
                 </div>
               </div>
             </div>
           </div>
-          <div class="chart-card technical-chart">
-            <h3>Duración de Sesión</h3>
-            <div ref="sessionChart"></div>
+        </div>
+
+        <!-- Panel Técnico -->
+        <div v-if="viewMode === 'technical'" class="dashboard-grid">
+          <!-- Fila superior: 3 gráficos -->
+          <div class="chart-row top-row">
+            <div class="chart-card technical-chart">
+              <h3>Rendimiento de la App</h3>
+              <div ref="performanceChart"></div>
+            </div>
+            <div class="chart-card technical-chart">
+              <h3>Seguimiento de Errores</h3>
+              <div ref="errorChart" class="echart-container"></div>
+            </div>
+            <div class="chart-card technical-chart">
+              <h3>Problemas de UI</h3>
+              <div class="ui-issues">
+                <div v-for="(issue, index) in uiIssues" :key="index" class="issue-item">
+                  <span class="issue-component">{{ issue.component }}</span>
+                  <span class="issue-priority" :class="'priority-' + issue.priority.toLowerCase()">
+                    {{ issue.priority }}
+                  </span>
+                  <span class="issue-desc">{{ issue.issue }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fila inferior: 2 gráficos -->
+          <div class="chart-row bottom-row">
+            <div class="chart-card technical-chart">
+              <h3>Uso de API</h3>
+              <div class="api-usage">
+                <div class="api-endpoint" v-for="(endpoint, index) in apiEndpoints" :key="index">
+                  <div class="endpoint-name">{{ endpoint.name }}</div>
+                  <div class="endpoint-bar">
+                    <div class="bar-fill" :style="{ width: endpoint.usage + '%' }"></div>
+                    <span class="bar-label">{{ endpoint.usage }}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="chart-card technical-chart">
+              <h3>Duración de Sesión</h3>
+              <div ref="sessionChart"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -395,7 +397,7 @@ export default defineComponent({
         });
       }
       
-      // Gráfico 2: Uso de funcionalidades (ApexCharts) - Modificado según solicitud
+      // Gráfico 2: Uso de funcionalidades (ApexCharts)
       if (featureUsageChart.value) {
         const chart = new ApexCharts(featureUsageChart.value, {
           series: [{
@@ -509,7 +511,7 @@ export default defineComponent({
         }, 150);
       }
       
-      // Gráfico 7: Duración de sesión (ApexCharts) - Modificado para ser más compacto
+      // Gráfico 7: Duración de sesión (ApexCharts)
       if (sessionChart.value) {
         const chart = new ApexCharts(sessionChart.value, {
           series: [45, 30, 15, 7, 3],
@@ -623,34 +625,59 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* Estilos generales */
+/* Reset de estilos conflictivos */
+ion-content {
+  --overflow: hidden;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
 .dashboard-content {
   --background: #f8f9fa;
-  height: calc(100vh - 56px);
-  padding: 1vh 1vw;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 8px;
   overflow: hidden;
 }
 
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  gap: 8px;
+}
+
 .view-mode-selector {
-  margin-bottom: 1vh;
+  margin-bottom: 8px;
   max-width: 380px;
   margin-left: auto;
   margin-right: auto;
+  flex-shrink: 0;
 }
 
 .progress-card {
   background: white;
   border-radius: 8px;
-  padding: 1vh 1vw;
-  margin-bottom: 1vh;
+  padding: 8px;
+  flex-shrink: 0;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
 }
 
 .progress-bar {
-  height: 2vh;
+  height: 16px;
   background: #f0f0f0;
   border-radius: 9px;
-  margin: 0.8vh 0;
+  margin: 6px 0;
   overflow: hidden;
 }
 
@@ -666,27 +693,29 @@ export default defineComponent({
 .progress-label {
   color: white;
   font-weight: bold;
-  margin-right: 0.5vw;
+  margin-right: 4px;
   font-size: 0.65rem;
 }
 
 .progress-note {
   color: #666;
   font-size: 0.65rem;
-  margin-top: 0.3vh;
+  margin-top: 4px;
 }
 
 .dashboard-grid {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 10vh);
+  flex: 1;
+  min-height: 0;
+  gap: 8px;
+  overflow: hidden;
 }
 
 .chart-row {
   display: flex;
   flex: 1;
-  gap: 1vw;
-  margin-bottom: 1vh;
+  gap: 8px;
   min-height: 0;
 }
 
@@ -702,13 +731,12 @@ export default defineComponent({
   flex: 1;
   background: white;
   border-radius: 8px;
-  padding: 1vh 1vw;
+  padding: 8px;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   min-height: 0;
-  position: relative;
-  height: 100%;
+  overflow: hidden;
 }
 
 .business-chart {
@@ -721,22 +749,22 @@ export default defineComponent({
 
 .chart-card h3 {
   color: #2e2e34;
-  margin: 0 0 0.6vh 0;
+  margin: 0 0 6px 0;
   font-size: 0.85rem;
   font-family: 'Roboto', sans-serif;
+  flex-shrink: 0;
 }
 
 .echart-container {
   width: 100%;
   height: 100%;
-  min-height: 20vh;
-  opacity: 1;
+  min-height: 0;
   background-color: transparent !important;
 }
 
 canvas, .apexcharts-canvas, .echarts {
-  flex: 1;
   width: 100% !important;
+  height: 100% !important;
   min-height: 0 !important;
   background-color: transparent !important;
 }
@@ -746,14 +774,15 @@ canvas, .apexcharts-canvas, .echarts {
   overflow-y: auto;
   min-height: 0;
   font-size: 0.75rem;
+  padding: 2px;
 }
 
 .event-item, .issue-item {
-  padding: 0.5vh 0;
+  padding: 4px 0;
   border-bottom: 1px solid #eee;
   display: grid;
-  grid-template-columns: 4vw 6vw 1fr;
-  gap: 0.5vw;
+  grid-template-columns: 40px 60px 1fr;
+  gap: 4px;
   align-items: center;
   font-size: 0.7rem;
 }
@@ -764,7 +793,7 @@ canvas, .apexcharts-canvas, .echarts {
 
 .event-type, .issue-priority {
   font-size: 0.6rem;
-  padding: 0.2vh 0.4vw;
+  padding: 2px 4px;
   border-radius: 3px;
   text-align: center;
 }
@@ -805,20 +834,20 @@ canvas, .apexcharts-canvas, .echarts {
 }
 
 .api-usage {
-  margin-top: 0.5vh;
+  margin-top: 4px;
 }
 
 .api-endpoint {
-  margin-bottom: 0.5vh;
+  margin-bottom: 4px;
 }
 
 .endpoint-name {
   font-size: 0.7rem;
-  margin-bottom: 0.2vh;
+  margin-bottom: 2px;
 }
 
 .endpoint-bar {
-  height: 1.2vh;
+  height: 10px;
   background-color: #eee;
   border-radius: 6px;
   position: relative;
@@ -840,7 +869,7 @@ canvas, .apexcharts-canvas, .echarts {
 
 .bar-label {
   position: absolute;
-  right: 0.3vw;
+  right: 4px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 0.6rem;
@@ -849,13 +878,13 @@ canvas, .apexcharts-canvas, .echarts {
 
 /* Estilos específicos para gráficos */
 .technical-chart .apexcharts-legend {
-  right: 0.5vw !important;
+  right: 4px !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
   width: 40% !important;
   max-height: 90% !important;
   overflow-y: auto !important;
-  padding: 0.5vh !important;
+  padding: 4px !important;
   background: rgba(255, 255, 255, 0.7) !important;
   border-radius: 5px !important;
 }
@@ -863,12 +892,12 @@ canvas, .apexcharts-canvas, .echarts {
 .technical-chart .apexcharts-legend-series {
   display: flex !important;
   align-items: center !important;
-  margin: 0.2vh 0 !important;
-  padding: 0.2vh 0.5vw !important;
+  margin: 2px 0 !important;
+  padding: 2px 4px !important;
 }
 
 .technical-chart .apexcharts-legend-marker {
-  margin-right: 0.4vw !important;
+  margin-right: 4px !important;
   width: 8px !important;
   height: 8px !important;
 }
@@ -882,21 +911,21 @@ canvas, .apexcharts-canvas, .echarts {
 @media (max-width: 1200px) {
   .chart-row {
     flex-direction: column;
-    gap: 1vh;
+    gap: 8px;
   }
   
   .chart-card {
-    min-height: 22vh;
+    min-height: 180px;
   }
   
   .echart-container {
-    min-height: 20vh;
+    min-height: 160px;
   }
 }
 
 @media (max-width: 768px) {
   .dashboard-content {
-    padding: 1vh 2vw;
+    padding: 8px;
   }
   
   .technical-chart .apexcharts-legend {
@@ -905,7 +934,7 @@ canvas, .apexcharts-canvas, .echarts {
     top: auto !important;
     right: auto !important;
     transform: none !important;
-    margin-top: 0.8vh !important;
+    margin-top: 8px !important;
   }
   
   .chart-card h3 {
@@ -914,7 +943,7 @@ canvas, .apexcharts-canvas, .echarts {
   
   .event-item, .issue-item {
     font-size: 0.65rem;
-    grid-template-columns: 8vw 10vw 1fr;
+    grid-template-columns: 60px 80px 1fr;
   }
 }
 </style>
